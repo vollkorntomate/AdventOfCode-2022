@@ -13,17 +13,15 @@ fn score(input: &str) -> u64 {
         .lines()
         .into_iter()
         .map(parse_line)
-        .map(|(own, outcome)| {
-            own.score(&outcome)
-        })
+        .map(|(own, outcome)| own.score(&outcome))
         .sum()
 }
 
 fn parse_line(line: &str) -> (RPS, Outcome) {
     let strat: Vec<&str> = line.trim().split(" ").collect();
-    let own = RPS::parse(strat.get(1).unwrap());
-    let other = &RPS::parse(strat.get(0).unwrap());
-    let outcome = own.outcome(other);
+    let other = RPS::parse(strat.get(0).unwrap());
+    let outcome = Outcome::parse(strat.get(1).unwrap());
+    let own = other.needed(&outcome);
 
     (own, outcome)
 }
@@ -38,9 +36,9 @@ enum RPS {
 impl RPS {
     fn parse(input: &str) -> RPS {
         match input {
-            "A" | "X" => RPS::Rock,
-            "B" | "Y" => RPS::Paper,
-            "C" | "Z" => Self::Scissors,
+            "A" => RPS::Rock,
+            "B" => RPS::Paper,
+            "C" => Self::Scissors,
             _ => panic!("Illegal value"),
         }
     }
@@ -55,15 +53,15 @@ impl RPS {
         score + outcome.score()
     }
 
-    fn outcome(&self, other: &RPS) -> Outcome {
-        match (self, other) {
-            (RPS::Rock, RPS::Paper) => Outcome::Lose,
-            (RPS::Rock, RPS::Scissors) => Outcome::Win,
-            (RPS::Paper, RPS::Rock) => Outcome::Win,
-            (RPS::Paper, RPS::Scissors) => Outcome::Lose,
-            (RPS::Scissors, RPS::Rock) => Outcome::Lose,
-            (RPS::Scissors, RPS::Paper) => Outcome::Win,
-            _ => Outcome::Draw,
+    fn needed(self, outcome: &Outcome) -> RPS {
+        match (&self, outcome) {
+            (RPS::Rock, Outcome::Win) => RPS::Paper,
+            (RPS::Rock, Outcome::Lose) => RPS::Scissors,
+            (RPS::Paper, Outcome::Win) => RPS::Scissors,
+            (RPS::Paper, Outcome::Lose) => RPS::Rock,
+            (RPS::Scissors, Outcome::Win) => RPS::Rock,
+            (RPS::Scissors, Outcome::Lose) => RPS::Paper,
+            (_, Outcome::Draw) => self,
         }
     }
 }
@@ -76,6 +74,15 @@ enum Outcome {
 }
 
 impl Outcome {
+    fn parse(input: &str) -> Outcome {
+        match input {
+            "X" => Outcome::Lose,
+            "Y" => Outcome::Draw,
+            "Z" => Outcome::Win,
+            _ => panic!("Illegal value"),
+        }
+    }
+
     fn score(&self) -> u64 {
         match self {
             Outcome::Win => 6,
@@ -88,5 +95,5 @@ impl Outcome {
 #[test]
 fn test() {
     let input = "A Y\nB X\nC Z";
-    assert_eq!(score(input), 15);
+    assert_eq!(score(input), 12);
 }
