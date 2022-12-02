@@ -10,3 +10,7 @@ author = "vollkorntomate"
 [[bin]]
 name = "01"
 path = "src/01/main.rs"
+
+[[bin]]
+name = "02"
+path = "src/02/main.rs"
