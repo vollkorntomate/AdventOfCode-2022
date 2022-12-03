@@ -10,23 +10,19 @@ fn main() {
 
 fn calc_priorities_sum(input: &str) -> u64 {
     let mut priorities = Vec::<u64>::new();
-    for line in input.lines() {
-        let (left, right) = split_half(line.trim());
 
-        for char in left.chars() {
-            if right.contains(char) {
+    let lines: Vec<&str> = input.lines().collect();
+    for chunk in lines.chunks(3) {
+        let (one, two, three) = (chunk[0], chunk[1], chunk[2]);
+        for char in one.chars() {
+            if two.contains(char) && three.contains(char) {
                 priorities.push(get_priority(char));
-                break; // only take first occurence
+                break;
             }
         }
     }
 
     priorities.iter().sum()
-}
-
-fn split_half(line: &str) -> (&str, &str) {
-    let len = line.len();
-    (&line[0..len / 2], &line[len / 2..len])
 }
 
 fn get_priority(char: char) -> u64 {
@@ -49,5 +45,5 @@ fn test() {
                         ttgJtRGJQctTZtZT\n\
                         CrZsJsPPZsGzwwsLwLmpwMDw";
 
-    assert_eq!(calc_priorities_sum(input), 157);
+    assert_eq!(calc_priorities_sum(input), 70);
 }
