@@ -4,21 +4,41 @@ use std::ops::RangeInclusive;
 fn main() {
     let file = fs::read_to_string("src/04/input.txt").expect("File not found");
 
-    let count = count_contains(file.as_str());
+    let count = count_overlaps(file.as_str());
 
-    println!("There are {} sections contained in one another.", count);
+    println!("There are {} sections overlapping one another.", count);
 }
 
+/// Part 1
 fn count_contains(input: &str) -> u64 {
+    let predicate = |range1: RangeInclusive<u64>, range2: RangeInclusive<u64>| {
+        (range2.start() <= range1.start() && range2.end() >= range1.end())
+            || (range1.start() <= range2.start() && range1.end() >= range2.end())
+    };
+
+    count_predicate(input, predicate)
+}
+
+/// Part 2
+fn count_overlaps(input: &str) -> u64 {
+    let predicate = |range1: RangeInclusive<u64>, range2: RangeInclusive<u64>| {
+        range1.start() <= range2.end() && range2.start() <= range1.end()
+    };
+
+    count_predicate(input, predicate)
+}
+
+fn count_predicate(
+    input: &str,
+    predicate: fn(RangeInclusive<u64>, RangeInclusive<u64>) -> bool,
+) -> u64 {
     let mut count = 0u64;
     for line in input.lines() {
         let pair = parse_pairs(line);
         let range1 = parse_range(pair.0);
         let range2 = parse_range(pair.1);
 
-        if (range2.start() <= range1.start() && range2.end() >= range1.end())
-            || (range1.start() <= range2.start() && range1.end() >= range2.end())
-        {
+        if predicate(range1, range2) {
             count += 1;
         }
     }
@@ -51,4 +71,5 @@ fn test() {
                         2-6,4-8";
 
     assert_eq!(count_contains(input), 2);
+    assert_eq!(count_overlaps(input), 4);
 }
