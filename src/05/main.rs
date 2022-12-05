@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::fs;
 use std::str::Lines;
 
@@ -48,16 +47,18 @@ fn make_moves(input: &mut Lines, stacks: &mut Stacks) {
     for line in input {
         let (n, from, to) = parse_move_line(line);
 
+        let mut temp = Vec::<char>::new();
         for _ in 0..n {
-            let val = stacks.get_mut(from - 1).unwrap().pop();
-            if let Some(val) = val {
-                stacks.get_mut(to - 1).unwrap().push(val);
-            }
+            let stack = stacks.get_mut(from - 1).unwrap();
+            temp.push(stack.pop().unwrap());
+        }
+        for _ in 0..n {
+            stacks.get_mut(to - 1).unwrap().push(temp.pop().unwrap());
         }
     }
 }
 
-fn parse_move_line(line: &str) -> (u64, usize, usize) {
+fn parse_move_line(line: &str) -> (usize, usize, usize) {
     let split = line.split(" ").collect::<Vec<&str>>();
     (
         split.get(1).unwrap().parse().unwrap(),
