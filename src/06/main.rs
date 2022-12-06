@@ -1,6 +1,8 @@
 use std::collections::{HashSet, VecDeque};
 use std::fs;
 
+const N_DISTINCT_CHARACTERS: usize = 14; // Part 1: 4; Part 2: 14
+
 fn main() {
     let input = fs::read_to_string("src/06/input.txt").expect("File not found");
 
@@ -15,7 +17,7 @@ fn find_marker(input: &str) -> u64 {
 
     for (i, char) in input.chars().enumerate() {
         buf.push_back(char);
-        if i > 3 {
+        if i >= N_DISTINCT_CHARACTERS {
             buf.pop_front();
 
             if are_all_different(&buf) {
@@ -36,9 +38,9 @@ fn are_all_different(queue: &VecDeque<char>) -> bool {
 
 #[test]
 fn test() {
-    assert_eq!(find_marker("mjqjpqmgbljsphdztnvjfqwrcgsmlb"), 7);
-    assert_eq!(find_marker("bvwbjplbgvbhsrlpgdmjqwftvncz"), 5);
-    assert_eq!(find_marker("nppdvjthqldpwncqszvftbrmjlhg"), 6);
-    assert_eq!(find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"), 10);
-    assert_eq!(find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"), 11);
+    assert_eq!(find_marker("mjqjpqmgbljsphdztnvjfqwrcgsmlb"), 19);
+    assert_eq!(find_marker("bvwbjplbgvbhsrlpgdmjqwftvncz"), 23);
+    assert_eq!(find_marker("nppdvjthqldpwncqszvftbrmjlhg"), 23);
+    assert_eq!(find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"), 29);
+    assert_eq!(find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"), 26);
 }
