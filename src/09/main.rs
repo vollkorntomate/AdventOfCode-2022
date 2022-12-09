@@ -9,24 +9,32 @@ fn main() {
 }
 
 fn count_tail_visits(input: &str) -> usize {
-    let mut head = (0i64, 0i64);
-    let mut tail = (0i64, 0i64);
+    let mut knots = [(0i64, 0i64); 10];
     let mut tail_positions = HashSet::<(i64, i64)>::new();
-    tail_positions.insert(tail);
+    tail_positions.insert((0, 0));
     for line in input.lines() {
         let split = line.split_whitespace().collect::<Vec<&str>>();
         let direction = *split.get(0).unwrap();
         let count: u64 = split.get(1).unwrap().parse().unwrap();
+        let move_dir = move_direction(direction);
 
         for _ in 0..count {
-            let move_dir = move_direction(direction);
-            head = (head.0 + move_dir.0, head.1 + move_dir.1);
+            knots[0] = (knots[0].0 + move_dir.0, knots[0].1 + move_dir.1); // first knot moves
+            for i in 1..knots.len() {
+                let head = knots[i - 1];
+                let mut tail = knots[i];
 
-            let distance = distance(&head, &tail);
-            if are_separated(&distance) {
-                let tail_move = tail_move(&distance);
-                tail = (tail.0 + tail_move.0, tail.1 + tail_move.1);
-                tail_positions.insert(tail);
+                let distance = distance(&head, &tail);
+                if are_separated(&distance) {
+                    let tail_move = tail_move(&distance);
+                    tail = (tail.0 + tail_move.0, tail.1 + tail_move.1);
+
+                    if i == knots.len() - 1 {
+                        // last knot
+                        tail_positions.insert(tail);
+                    }
+                }
+                knots[i] = tail;
             }
         }
     }
@@ -68,14 +76,14 @@ fn move_direction(direction: &str) -> (i64, i64) {
 
 #[test]
 fn test() {
-    let input = "R 4\n\
-                        U 4\n\
-                        L 3\n\
-                        D 1\n\
-                        R 4\n\
-                        D 1\n\
-                        L 5\n\
-                        R 2";
+    let input = "R 5\n\
+                        U 8\n\
+                        L 8\n\
+                        D 3\n\
+                        R 17\n\
+                        D 10\n\
+                        L 25\n\
+                        U 20";
 
-    assert_eq!(count_tail_visits(input), 13)
+    assert_eq!(count_tail_visits(input), 36);
 }
