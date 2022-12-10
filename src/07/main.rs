@@ -91,7 +91,7 @@ impl State {
     fn sum_dir(&self, dir: &str) -> u64 {
         self.files
             .iter()
-            .filter(|(name, files)| name.starts_with(dir))
+            .filter(|(name, _)| name.starts_with(dir))
             .flat_map(|(_, files)| files)
             .map(|(_, size)| size)
             .sum()
@@ -109,7 +109,10 @@ fn main() {
     let size_to_free = find_smallest(&state);
 
     println!("Sum of all files under 100k is {}", sum_under_100k);
-    println!("The smallest directory to free up space has size {}", size_to_free);
+    println!(
+        "The smallest directory to free up space has size {}",
+        size_to_free
+    );
 }
 
 fn parse_lines(input: &str, state: &mut State) {
@@ -133,7 +136,8 @@ fn find_smallest(state: &State) -> u64 {
     let currently_unused = TOTAL_DISK_SPACE - currently_used;
     let needed = MIN_UNUSED_SPACE - currently_unused;
 
-    state.files
+    state
+        .files
         .keys()
         .map(String::as_str)
         .map(|dir| state.sum_dir(dir))

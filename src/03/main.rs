@@ -35,7 +35,6 @@ fn get_priority(char: char) -> u64 {
     0
 }
 
-
 #[test]
 fn test() {
     let input = "vJrwpWtwJgWrhcsFMMfFFhFp\n\

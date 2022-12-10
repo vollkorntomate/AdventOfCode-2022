@@ -4,9 +4,11 @@ use std::ops::RangeInclusive;
 fn main() {
     let file = fs::read_to_string("src/04/input.txt").expect("File not found");
 
-    let count = count_overlaps(file.as_str());
+    let contained = count_contains(file.as_str());
+    let overlapping = count_overlaps(file.as_str());
 
-    println!("There are {} sections overlapping one another.", count);
+    println!("There are {} sections contained in one another.", contained);
+    println!("There are {} sections overlapping one another.", overlapping);
 }
 
 /// Part 1
