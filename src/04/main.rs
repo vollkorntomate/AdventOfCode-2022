@@ -8,7 +8,10 @@ fn main() {
     let overlapping = count_overlaps(file.as_str());
 
     println!("There are {} sections contained in one another.", contained);
-    println!("There are {} sections overlapping one another.", overlapping);
+    println!(
+        "There are {} sections overlapping one another.",
+        overlapping
+    );
 }
 
 /// Part 1
