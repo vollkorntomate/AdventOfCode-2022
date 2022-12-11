@@ -20,21 +20,20 @@ fn parse_input(input: &str) -> Vec<Monkey> {
 fn play(input: &str) -> u64 {
     let mut monkeys = parse_input(input);
     let mut inspections = (0..monkeys.len()).map(|_| 0u64).collect::<Vec<_>>();
+    let total_mod = monkeys.iter().map(|m| m.test).product::<u64>();
 
-    for _ in 0..20 {
+    for _ in 0..10000 {
         for i in 0..monkeys.len() {
             let monkey = monkeys[i].clone();
             for item in monkey.items {
                 inspections[i] += 1;
                 monkeys[i].items.remove(0);
 
-                let worry = monkey.op.perform(item) / 3;
+                let worry = monkey.op.perform(item) % total_mod;
                 if worry % monkey.test == 0 {
-                    let other = &mut monkeys[monkey.action.0];
-                    other.items.push(worry);
+                    monkeys[monkey.action.0].items.push(worry);
                 } else {
-                    let other = &mut monkeys[monkey.action.1];
-                    other.items.push(worry);
+                    monkeys[monkey.action.1].items.push(worry);
                 }
             }
         }
@@ -114,5 +113,5 @@ impl Op {
 fn test() {
     let input = fs::read_to_string("src/11/test.txt").unwrap();
 
-    assert_eq!(play(input.as_str()), 10605);
+    assert_eq!(play(input.as_str()), 2713310158);
 }
