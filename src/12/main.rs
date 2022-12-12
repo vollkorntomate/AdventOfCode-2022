@@ -9,20 +9,36 @@ type Position = (usize, usize);
 fn main() {
     let input = fs::read_to_string("src/12/input.txt").unwrap();
 
-    let steps = number_of_steps(input.as_str());
+    let steps = find_start_point(input.as_str());
 
     println!("To reach the goal, {} steps are required", steps);
 }
 
-fn number_of_steps(input: &str) -> u64 {
+fn find_start_point(input: &str) -> u64 {
     let (grid, start, end) = parse_input(input);
 
+    let mut min: u64 = number_of_steps(&grid, start, end).unwrap();
+
+    for y in 0..grid.len() {
+        for x in 0..grid.first().unwrap().len() {
+            if let Some(0) = grid.get(y).and_then(|row| row.get(x)) {
+                if let Some(distance) = number_of_steps(&grid, (x, y), end) {
+                    min = distance.min(min);
+                }
+            }
+        }
+    }
+
+    min
+}
+
+fn number_of_steps(grid: &Grid, start: Position, end: Position) -> Option<u64> {
     let mut visited = HashSet::<Position>::new();
     let mut candidates = VecDeque::<(Position, u64)>::new();
     candidates.push_back((start, 0));
     while let Some(((x, y), len)) = candidates.pop_front() {
         if (x, y) == end {
-            return len;
+            return Some(len);
         }
         let height = grid[y][x];
 
@@ -40,7 +56,7 @@ fn number_of_steps(input: &str) -> u64 {
             }
         }
     }
-    0
+    None
 }
 
 fn parse_input(input: &str) -> (Grid, Position, Position) {
@@ -78,5 +94,5 @@ fn test() {
                         acctuvwj\n\
                         abdefghi";
 
-    assert_eq!(number_of_steps(input), 31);
+    assert_eq!(find_start_point(input), 29);
 }
