@@ -11,18 +11,66 @@ fn main() {
     let input = fs::read_to_string("src/13/input.txt").unwrap();
 
     let indices_sum = sum_indices(input.as_str());
+    let decoder_key = part2(input.as_str());
 
     println!("The indices sum is {}", indices_sum);
+    println!("The decoder key is {}", decoder_key);
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum PacketItem {
     Number(u64),
     List(Vec<PacketItem>),
 }
 
+impl Ord for PacketItem {
+    fn cmp(&self, other: &Self) -> Ordering {
+        compare(self, other)
+    }
+}
+
+impl PartialEq for PacketItem {
+    fn eq(&self, other: &Self) -> bool {
+        compare(self, other) == Ordering::Equal
+    }
+
+    fn ne(&self, other: &Self) -> bool {
+        !self.eq(other)
+    }
+}
+
+impl PartialOrd for PacketItem {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(compare(self, other))
+    }
+
+    fn lt(&self, other: &Self) -> bool {
+        matches!(self.partial_cmp(other), Some(Ordering::Less))
+    }
+
+    fn le(&self, other: &Self) -> bool {
+        matches!(
+            self.partial_cmp(other),
+            Some(Ordering::Less | Ordering::Equal)
+        )
+    }
+
+    fn gt(&self, other: &Self) -> bool {
+        matches!(self.partial_cmp(other), Some(Ordering::Greater))
+    }
+
+    fn ge(&self, other: &Self) -> bool {
+        matches!(
+            self.partial_cmp(other),
+            Some(Ordering::Greater | Ordering::Equal)
+        )
+    }
+}
+
+impl Eq for PacketItem {}
+
 fn sum_indices(input: &str) -> u64 {
-    let pairs = parse_input(input);
+    let pairs = parse_pairs(input);
 
     pairs
         .into_iter()
@@ -35,6 +83,22 @@ fn sum_indices(input: &str) -> u64 {
             }
         })
         .sum()
+}
+
+fn part2(input: &str) -> u64 {
+    let mut packets = parse_packets(input);
+
+    let additional1 = PacketItem::List(vec![PacketItem::List(vec![PacketItem::Number(2)])]);
+    let additional2 = PacketItem::List(vec![PacketItem::List(vec![PacketItem::Number(6)])]);
+    packets.push(additional1.clone());
+    packets.push(additional2.clone());
+
+    packets.sort();
+
+    let index1 = packets.iter().position(|p| p.eq(&additional1)).unwrap() + 1;
+    let index2 = packets.iter().position(|p| p.eq(&additional2)).unwrap() + 1;
+
+    (index1 * index2) as u64
 }
 
 fn compare(left: &PacketItem, right: &PacketItem) -> Ordering {
@@ -64,7 +128,7 @@ fn compare(left: &PacketItem, right: &PacketItem) -> Ordering {
     }
 }
 
-fn parse_input(input: &str) -> Vec<Pair> {
+fn parse_pairs(input: &str) -> Vec<Pair> {
     input
         .split("\n\n")
         .map(|two_line| {
@@ -76,6 +140,14 @@ fn parse_input(input: &str) -> Vec<Pair> {
                 parse_list(&mut right.chars().skip(1).peekable()),
             )
         })
+        .collect::<Vec<_>>()
+}
+
+fn parse_packets(input: &str) -> Vec<PacketItem> {
+    input
+        .split("\n")
+        .filter(|l| !l.trim().is_empty())
+        .map(|l| parse_list(&mut l.trim().chars().skip(0).peekable()))
         .collect::<Vec<_>>()
 }
 
@@ -130,4 +202,5 @@ fn test() {
                         [1,[2,[3,[4,[5,6,0]]]],8,9]";
 
     assert_eq!(sum_indices(input), 13);
+    assert_eq!(part2(input), 140);
 }
