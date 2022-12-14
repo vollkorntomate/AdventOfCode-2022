@@ -17,19 +17,12 @@ fn count_resting_sand(input: &str) -> u64 {
     print_grid(&grid);
 
     let mut sand: Pos = (500, 0);
-    let mut running = true;
-    while running {
+    while let None = grid.get(&sand) {
         let mut make_solid = true;
         for (x, y) in [(0, 1), (-1, 1), (1, 1)] {
             let next = (sand.0 + x, sand.1 + y);
-            if let Some(State::Air) = grid.get(&next) {
-                sand = next;
-                make_solid = false;
-                break;
-            }
-
             if let None = grid.get(&next) {
-                running = false;
+                sand = next;
                 make_solid = false;
                 break;
             }
@@ -66,12 +59,9 @@ fn parse_input(input: &str) -> Grid {
     }
 
     let ((min_x, _), (max_x, max_y)) = min_max(&grid);
-    for x in min_x..=max_x {
-        for y in 0..=max_y {
-            if let None = grid.get(&(x, y)) {
-                grid.insert((x, y), State::Air);
-            }
-        }
+    for x in (min_x - 1000)..=(max_x + 1000) {
+        // assuming 1000 is large enough
+        grid.insert((x, max_y + 2), State::Rock);
     }
 
     grid
@@ -97,16 +87,17 @@ fn min_max(grid: &Grid) -> (Pos, Pos) {
 }
 
 fn print_grid(grid: &Grid) {
-    let ((min_x, min_y), (max_x, max_y)) = min_max(grid);
+    let ((mut min_x, min_y), (mut max_x, max_y)) = min_max(grid);
+    min_x += 995;
+    max_x -= 995;
     println!("x: {min_x} - {max_x}");
     for y in min_y..=max_y {
         print!("{y} ");
         for x in min_x..=max_x {
             let char = match grid.get(&(x, y)) {
-                Some(State::Air) => '.',
+                None => '.',
                 Some(State::Rock) => '#',
                 Some(State::RestingSand) => 'o',
-                None => '-',
             };
             print!("{}", char);
         }
@@ -117,7 +108,6 @@ fn print_grid(grid: &Grid) {
 #[derive(PartialEq)]
 enum State {
     Rock,
-    Air,
     RestingSand,
 }
 
@@ -126,5 +116,5 @@ fn test() {
     let input = "498,4 -> 498,6 -> 496,6\n\
                         503,4 -> 502,4 -> 502,9 -> 494,9";
 
-    assert_eq!(count_resting_sand(input), 24);
+    assert_eq!(count_resting_sand(input), 93);
 }
