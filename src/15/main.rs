@@ -6,30 +6,36 @@ use std::{
 fn main() {
     let input = fs::read_to_string("src/15/input.txt").unwrap();
 
-    let count = count_no_positions(input.as_str(), 2_000_000);
+    let tuning_frequency = find_tuning_frequency(input.as_str(), 4_000_000);
 
-    println!("There are {} positions that are not covered.", count);
+    println!("The tuning frequency is {}.", tuning_frequency);
 }
 
 type Pos = (i64, i64);
 type Grid = HashMap<Pos, i64>; // pos -> distance
 
-fn count_no_positions(input: &str, row: i64) -> u64 {
-    let (sensors, beacons) = parse_input(input);
+fn find_tuning_frequency(input: &str, limit: i64) -> i64 {
+    let (sensors, _) = parse_input(input);
 
-    let mut covered = HashSet::<i64>::new();
-    for ((x, y), distance) in sensors {
-        if row >= y - distance && row <= y + distance {
-            let remaining = distance - (row - y).abs();
-            for dx in (x - remaining)..=(x + remaining) {
-                covered.insert(dx);
+    for (&(x, y), &distance) in &sensors {
+        for (dir_x, dir_y) in [(1, 1), (-1, 1), (-1, -1), (1, -1)] {
+            for d in 0..distance {
+                let try_x = x + dir_x * d;
+                let remaining = distance - d;
+                let try_y = y + dir_y * (remaining + 1); // one further than reach
+                if try_x < 0 || try_y < 0 || try_x > limit || try_y > limit {
+                    continue;
+                }
+                if sensors
+                    .iter()
+                    .all(|(&pos, &sd)| manhattan_distance(pos, (try_x, try_y)) > sd)
+                {
+                    return try_x * 4_000_000 + try_y;
+                }
             }
         }
     }
-
-    let beacon_count = beacons.iter().filter(|(_, y)| y == &row).count();
-
-    (covered.len() - beacon_count) as u64
+    0
 }
 
 fn parse_input(input: &str) -> (Grid, HashSet<Pos>) {
@@ -88,5 +94,5 @@ fn test() {
                 Sensor at x=14, y=3: closest beacon is at x=15, y=3\n\
                 Sensor at x=20, y=1: closest beacon is at x=15, y=3";
 
-    assert_eq!(count_no_positions(input, 10), 26);
+    assert_eq!(find_tuning_frequency(input, 20), 56_000_011);
 }
