@@ -8,30 +8,35 @@ fn main() {
     println!("The sum of the coordinates is {coordinate_sum}");
 }
 
-fn mix(input: &str) -> i32 {
+const DECRYPTION_KEY: i64 = 811589153;
+
+fn mix(input: &str) -> i64 {
     let original = input
         .split("\n")
         .filter(|&s| !s.trim().is_empty())
-        .map(|s| s.trim().parse::<i32>().unwrap())
+        .map(|s| s.trim().parse::<i64>().unwrap() * DECRYPTION_KEY)
         .enumerate()
         .collect::<Vec<_>>();
     let mut mixed = original.clone();
 
-    for n in original.iter() {
-        let old_index = mixed.iter().position(|x| x == n).unwrap();
-        let removed = mixed.remove(old_index);
-        
-        let size = mixed.len() as i32;
-        let new_index = (old_index as i32 + n.1).rem_euclid(size) as usize;
-        
-        mixed.insert(new_index, removed);
+    for _ in 0..10 {
+        // 10 rounds of mixing
+        for n in original.iter() {
+            let old_index = mixed.iter().position(|x| x == n).unwrap();
+            let removed = mixed.remove(old_index);
+
+            let size = mixed.len() as i64;
+            let new_index = (old_index as i64 + n.1).rem_euclid(size) as usize;
+
+            mixed.insert(new_index, removed);
+        }
     }
 
     let zero_index = mixed.iter().position(|(_, n)| *n == 0).unwrap();
     let (first, second, third) = (
         mixed[(zero_index + 1000) % mixed.len()].1,
         mixed[(zero_index + 2000) % mixed.len()].1,
-        mixed[(zero_index + 3000) % mixed.len()].1
+        mixed[(zero_index + 3000) % mixed.len()].1,
     );
 
     first + second + third
@@ -49,5 +54,5 @@ fn test() {
 
     mix(input);
 
-    assert_eq!(mix(input), 3);
+    assert_eq!(mix(input), 1623178306);
 }
