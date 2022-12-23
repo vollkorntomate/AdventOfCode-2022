@@ -4,7 +4,7 @@ use std::str::Lines;
 type Stacks = Vec<Vec<char>>;
 
 fn main() {
-    let input = fs::read_to_string("src/05/input.txt").expect("File not found");
+    let input = fs::read_to_string("inputs/05.txt").expect("File not found");
     let mut input_iter = input.lines().into_iter();
 
     let mut stacks = parse_stack(&mut input_iter).unwrap();

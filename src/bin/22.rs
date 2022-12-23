@@ -1,7 +1,7 @@
 use std::{collections::HashMap, fs};
 
 fn main() {
-    let input = fs::read_to_string("src/22/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/22.txt").unwrap();
 
     let password = find_password(input.as_str());
 
@@ -133,7 +133,7 @@ enum Instruction {
 
 #[test]
 fn test() {
-    let input = fs::read_to_string("src/22/test.txt").unwrap();
+    let input = fs::read_to_string("test-inputs/22.txt").unwrap();
 
     assert_eq!(find_password(input.as_str()), 6032);
 }

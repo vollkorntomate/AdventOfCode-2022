@@ -8,7 +8,7 @@ use std::{
 type Pair = (PacketItem, PacketItem);
 
 fn main() {
-    let input = fs::read_to_string("src/13/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/13.txt").unwrap();
 
     let indices_sum = sum_indices(input.as_str());
     let decoder_key = part2(input.as_str());

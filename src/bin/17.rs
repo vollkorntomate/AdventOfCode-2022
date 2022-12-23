@@ -1,7 +1,7 @@
 use std::{fs, usize};
 
 fn main() {
-    let input = fs::read_to_string("src/17/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/17.txt").unwrap();
 
     let height = tower_height(input.as_str());
 

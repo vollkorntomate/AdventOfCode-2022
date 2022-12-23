@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("src/02/input.txt").expect("File not found");
+    let input = fs::read_to_string("inputs/02.txt").expect("File not found");
 
     let score = score(input.as_str());
 

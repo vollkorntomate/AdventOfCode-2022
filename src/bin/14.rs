@@ -1,7 +1,7 @@
 use std::{collections::HashMap, fs};
 
 fn main() {
-    let input = fs::read_to_string("src/14/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/14.txt").unwrap();
 
     let resting_sand = count_resting_sand(input.as_str());
 

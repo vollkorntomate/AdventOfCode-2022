@@ -1,7 +1,7 @@
 use std::{collections::HashSet, fs};
 
 fn main() {
-    let input = fs::read_to_string("src/18/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/18.txt").unwrap();
 
     let sides = count_cube_sides(input.as_str());
 

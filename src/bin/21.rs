@@ -1,7 +1,7 @@
 use std::{collections::HashMap, fs};
 
 fn main() {
-    let input = fs::read_to_string("src/21/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/21.txt").unwrap();
 
     let human_yell = calc_human_yell(input.as_str());
 

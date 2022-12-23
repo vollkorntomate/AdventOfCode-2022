@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("src/11/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/11.txt").unwrap();
 
     let monkey_business = play(input.as_str());
 
@@ -111,7 +111,7 @@ impl Op {
 
 #[test]
 fn test() {
-    let input = fs::read_to_string("src/11/test.txt").unwrap();
+    let input = fs::read_to_string("test-inputs/11").unwrap();
 
     assert_eq!(play(input.as_str()), 2713310158);
 }

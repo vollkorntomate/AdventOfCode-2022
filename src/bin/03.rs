@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("src/03/input.txt").expect("File not found");
+    let input = fs::read_to_string("inputs/03.txt").expect("File not found");
 
     let sum = calc_priorities_sum(input.as_str());
 

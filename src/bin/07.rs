@@ -99,7 +99,7 @@ impl State {
 }
 
 fn main() {
-    let input = fs::read_to_string("src/07/input.txt").expect("File not found");
+    let input = fs::read_to_string("inputs/07.txt").expect("File not found");
     let input = input.as_str();
     let mut state = State::new();
 

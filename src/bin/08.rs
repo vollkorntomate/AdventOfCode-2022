@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("src/08/input.txt").expect("File not found");
+    let input = fs::read_to_string("inputs/08.txt").expect("File not found");
 
     let num_visible = num_visible_trees(input.as_str()).unwrap();
     let scenic_score = scenic_score(input.as_str()).unwrap();

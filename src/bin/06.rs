@@ -4,7 +4,7 @@ use std::fs;
 const N_DISTINCT_CHARACTERS: usize = 14; // Part 1: 4; Part 2: 14
 
 fn main() {
-    let input = fs::read_to_string("src/06/input.txt").expect("File not found");
+    let input = fs::read_to_string("inputs/06.txt").expect("File not found");
 
     let marker_pos = find_marker(input.as_str());
 

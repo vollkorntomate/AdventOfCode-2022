@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("src/10/input.txt").expect("File not found");
+    let input = fs::read_to_string("inputs/10.txt").expect("File not found");
 
     let signal_sum = sum_signal_strengths(input.as_str());
 
@@ -98,7 +98,7 @@ impl State {
 
 #[test]
 fn test() {
-    let input = fs::read_to_string("src/10/test.txt").expect("File not found");
+    let input = fs::read_to_string("test-inputs/10.txt").expect("File not found");
 
     assert_eq!(sum_signal_strengths(input.as_str()), 13140);
 }

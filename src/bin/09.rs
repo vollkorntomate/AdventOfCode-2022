@@ -1,7 +1,7 @@
 use std::{collections::HashSet, fs};
 
 fn main() {
-    let input = fs::read_to_string("src/09/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/09.txt").unwrap();
 
     let visits = count_tail_visits(input.as_str());
 

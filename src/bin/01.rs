@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("src/01/input.txt").expect("File not found");
+    let input = fs::read_to_string("inputs/01.txt").expect("File not found");
 
     let mut calories: Vec<u64> = vec![];
 

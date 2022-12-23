@@ -7,7 +7,7 @@ type Grid = Vec<Vec<u8>>;
 type Position = (usize, usize);
 
 fn main() {
-    let input = fs::read_to_string("src/12/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/12.txt").unwrap();
 
     let steps = find_start_point(input.as_str());
 

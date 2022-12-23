@@ -4,7 +4,7 @@ use std::{
 };
 
 fn main() {
-    let input = fs::read_to_string("src/15/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/15.txt").unwrap();
 
     let tuning_frequency = find_tuning_frequency(input.as_str(), 4_000_000);
 

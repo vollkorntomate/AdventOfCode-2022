@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("src/20/input.txt").unwrap();
+    let input = fs::read_to_string("inputs/20.txt").unwrap();
 
     let coordinate_sum = mix(input.as_str());
 

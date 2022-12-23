@@ -2,7 +2,7 @@ use std::fs;
 use std::ops::RangeInclusive;
 
 fn main() {
-    let file = fs::read_to_string("src/04/input.txt").expect("File not found");
+    let file = fs::read_to_string("inputs/04.txt").expect("File not found");
 
     let contained = count_contains(file.as_str());
     let overlapping = count_overlaps(file.as_str());
