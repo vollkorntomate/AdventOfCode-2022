@@ -6,28 +6,38 @@ use std::{
 fn main() {
     let input = fs::read_to_string("inputs/23.txt").unwrap();
 
-    let empty_fields = empty_fields(input.as_str());
+    let (empty_fields, first_round_without_move) = empty_fields(input.as_str());
 
-    println!("There are {empty_fields} empty fields in the rectangle.");
+    // println!("There are {empty_fields} empty fields in the rectangle.");
+    println!("The first round with no elf moving was round {first_round_without_move}.");
 }
 
 type Coord = (i32, i32);
 type Field = HashSet<Coord>;
 const DIRECTIONS: [Coord; 4] = [(0, -1), (0, 1), (-1, 0), (1, 0)]; // N,S,W,E
 
-fn empty_fields(input: &str) -> u64 {
+fn empty_fields(input: &str) -> (u64, u64) {
     let mut field = parse_input(input);
 
-    for round in 0..10 {
+    let mut no_moves = false;
+    let mut round = 0;
+    while !no_moves {
         let propositions = simulate_round(&mut field, round % 4);
+
+        if propositions.is_empty() {
+            no_moves = true;
+            break;
+        }
 
         for (&new, old) in propositions.iter() {
             field.remove(old);
             field.insert(new);
         }
+
+        round += 1;
     }
 
-    field_size(&field) - (field.len() as u64)
+    (field_size(&field) - (field.len() as u64), round as u64 + 1)
 }
 
 fn simulate_round(field: &mut Field, direction: usize) -> HashMap<Coord, Coord> {
@@ -116,21 +126,6 @@ fn min_max(field: &Field) -> (Coord, Coord) {
     ((min_x, min_y), (max_x, max_y))
 }
 
-// fn print_field(field: &Field) {
-//     let ((min_x, min_y), (max_x, max_y)) = min_max(field);
-
-//     for y in min_y..=max_y {
-//         for x in min_x..=max_x {
-//             if field.contains(&(x,y)) {
-//                 print!("#")
-//             } else {
-//                 print!(".")
-//             }
-//         }
-//         println!("");
-//     }
-// }
-
 #[test]
 fn test() {
     let input = "....#..\n\
@@ -141,5 +136,7 @@ fn test() {
                     ##.#.##\n\
                     .#..#..";
 
-    assert_eq!(empty_fields(input), 110);
+    let (empty_fields, first_round_without_move) = empty_fields(input);
+    // assert_eq!(empty_fields, 110);
+    assert_eq!(first_round_without_move, 20);
 }
