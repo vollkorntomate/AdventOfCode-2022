@@ -6,9 +6,10 @@ use std::{
 fn main() {
     let input = fs::read_to_string("inputs/23.txt").unwrap();
 
-    let (empty_fields, first_round_without_move) = empty_fields(input.as_str());
+    let (n_empty_fields, _) = empty_fields(input.as_str(), 10);
+    let (_, first_round_without_move) = empty_fields(input.as_str(), usize::MAX);
 
-    // println!("There are {empty_fields} empty fields in the rectangle.");
+    println!("There are {n_empty_fields} empty fields in the rectangle.");
     println!("The first round with no elf moving was round {first_round_without_move}.");
 }
 
@@ -16,16 +17,14 @@ type Coord = (i32, i32);
 type Field = HashSet<Coord>;
 const DIRECTIONS: [Coord; 4] = [(0, -1), (0, 1), (-1, 0), (1, 0)]; // N,S,W,E
 
-fn empty_fields(input: &str) -> (u64, u64) {
+fn empty_fields(input: &str, rounds: usize) -> (u64, u64) {
     let mut field = parse_input(input);
 
-    let mut no_moves = false;
     let mut round = 0;
-    while !no_moves {
+    while round < rounds {
         let propositions = simulate_round(&mut field, round % 4);
 
         if propositions.is_empty() {
-            no_moves = true;
             break;
         }
 
@@ -90,11 +89,11 @@ fn is_elf_adjacent(field: &Field, (x, y): Coord) -> bool {
 }
 
 fn is_elf_adjacent_x(field: &Field, (x, y): Coord) -> bool {
-    field.iter().any(|&(ix, iy)| iy == y && (ix - x).abs() <= 1)
+    field.contains(&(x - 1, y)) || field.contains(&(x, y)) || field.contains(&(x + 1, y))
 }
 
 fn is_elf_adjacent_y(field: &Field, (x, y): Coord) -> bool {
-    field.iter().any(|&(ix, iy)| ix == x && (iy - y).abs() <= 1)
+    field.contains(&(x, y - 1)) || field.contains(&(x, y)) || field.contains(&(x, y + 1))
 }
 
 fn parse_input(input: &str) -> Field {
@@ -136,7 +135,8 @@ fn test() {
                     ##.#.##\n\
                     .#..#..";
 
-    let (empty_fields, first_round_without_move) = empty_fields(input);
-    // assert_eq!(empty_fields, 110);
+    let (n_empty_fields, _) = empty_fields(input, 10);
+    let (_, first_round_without_move) = empty_fields(input, usize::MAX);
+    assert_eq!(n_empty_fields, 110);
     assert_eq!(first_round_without_move, 20);
 }
